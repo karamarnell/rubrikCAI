@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd">
+<task id="fca_creating_cluster_using_api">
+    <title>Creating a failover cluster app</title>
+    <shortdesc>Use the Rubrik REST API to create a failover cluster app. </shortdesc>
+    <taskbody>
+        <prereq>Complete the Adding hosts task to add the failover cluster nodes to the Rubrik
+            cluster.</prereq>
+        <context>A Rubrik cluster interacts with a failover cluster through a failover cluster app.
+            Use Rubrik REST API calls to combine the failover cluster nodes into a failover cluster
+            app. Make the API calls by using the OpenAPI-based Rubrik playground, by issuing cURL
+            commands from the command line of a computer with access to the Rubrik cluster, or by
+            using any RESTful API-compliant client software. Access the Rubrik REST API playground
+            through a Rubrik cluster at:
+                <userinput>https://<varname>$cluster_address</varname>/docs/v1/playground/</userinput><p/></context>
+        <steps>
+            <step>
+                <cmd>Log in to the web UI.</cmd>
+            </step>
+            <step>
+                <cmd>Click the account icon in the upper right corner and select <uicontrol>API
+                        Token Manager</uicontrol>.</cmd>
+            </step>
+            <step>
+                <cmd>On the API Token Manager page, click <uicontrol>+</uicontrol>.</cmd>
+            </step>
+            <step>
+                <cmd>Complete the Duration and tag fields and click
+                    <uicontrol>Generate</uicontrol>.</cmd>
+            </step>
+            <step>
+                <cmd>Click <uicontrol>Copy</uicontrol>.</cmd>
+            </step>
+            <step>
+                <cmd>Paste the token in a scratch file.</cmd>
+            </step>
+            <step>
+                <cmd>Use the token value to create an authenticated session with the Rubrik REST API
+                    server.</cmd>
+                <info>In the Rubrik REST API playground, click Authorize, paste the token in the
+                    value field, and click Authorize.</info>
+            </step>
+            <step>
+                <cmd>Obtain the Host ID for each node by making a <codeph>GET /host</codeph>
+                    call.</cmd>
+                <stepxmp>The cURL command for this is: <codeph>curl -X GET --header 'Accept:
+                        application/json'/ 'https://<varname>$cluster_address</varname>/api/v1/host'
+                    </codeph></stepxmp>
+                <stepresult>The <codeph>data</codeph> array in the response body supplies the
+                    details for each host object. The <codeph>id</codeph> element has the ID for a
+                    host. The ID has the form
+                    <codeph>Host:::<varname>$host-uuid</varname></codeph>.</stepresult>
+            </step>
+            <step>
+                <cmd>Create the failover cluster by making a <codeph>POST /failover_cluster
+                        call</codeph>.</cmd>
+                <info>The request body must supply the <codeph>hostIds</codeph> array that contains
+                    each host ID value.</info>
+                <stepxmp>The cURL command for this would be:<codeph> curl -X POST -d {"config":
+                        {"name": "$fc-name", "hostIds":[
+                            "Host:::<varname>$host1-uuid</varname>","Host:::<varname>$host2-uuid</varname>"
+                        ]}}
+                        'https://<varname>$cluster_address</varname>/api/v1/failover_cluster</codeph>'</stepxmp>
+                <stepresult>The response body has the ID for the failover cluster object. The ID has
+                    the form
+                            <codeph>HostFailoverCluster:::<varname>$host_failover_cluster-uuid</varname></codeph>
+                </stepresult>
+            </step>
+            <step>
+                <cmd>Create the failover cluster app by making a <codeph>POST
+                        /failover_cluster/failover_cluster_app</codeph> call.</cmd>
+                <info>The request body must supply a failover cluster app name, the failover cluster
+                    type (Windows or UnixLike), the failover cluster ID, and a single virtual IP
+                    address (VIP) for the failover cluster application. </info>
+                <stepxmp> The cURL command for this would be: <codeph>curl -X POST -d {"config":
+                        {"name": "<varname>$fc_app-name</varname>",
+                            "failoverClusterType":"<varname>$failover_cluster_type</varname>",
+                            "failoverClusterId":"HostFailoverCluster:::<varname>$failover_cluster-uuid</varname>",
+                        "vips":[ "<varname>$vip</varname>" ]}}
+                            'https://<varname>$cluster_address</varname>/api/v1/failover_cluster/failover_cluster_app'</codeph></stepxmp>
+                <stepresult>The Rubrik REST API server responds with HTTP 201. The response body
+                    contains the details for the failover cluster app. Find the ID for the failover
+                    cluster app and retain that value for subsequent tasks. The ID has the form:
+                            <codeph>FailoverClusterApp:::<varname>$failove_cluster_app-uuid</varname></codeph>.</stepresult>
+            </step>
+        </steps>
+        <result>The Rubrik REST API server creates the specified failover cluster app.</result>
+        <postreq>Use the web UI to create a fileset for the failover cluster.</postreq>
+    </taskbody>
+</task>
