@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd">
+<task xmlns:ditaarch="http://dita.oasis-open.org/architecture/2005/" id="task_cvm_shared" ditaarch:DITAArchVersion="1.2">
+	<title>Controller VM Shared</title>
+	<taskbody>
+		<context>
+			<p id="p_ipmitool_show_log">
+				<codeblock xml:space="preserve">CompanyX@cvm$ <ph conref="#task_cvm_shared/ph_ipmitool_usage" /> sel list</codeblock>
+				<ul conref="#task_cvm_shared/ul_ipmitool_usage" id="ul_zgn_2p4_d3">
+					<li/>
+				</ul>
+			</p>
+			<note id="note_cvm_warning">Do not reset or shutdown the Controller VM in any way other than the
+					<cmdname>cvm_shutdown</cmdname> command to ensure that the cluster is aware that
+				the Controller VM is unavailable</note>
+		</context>
+		<steps-unordered>
+			<step id="step_ssh_cvm">
+				<cmd id="cmd_ssh_svm">Log on to the Controller VM<ph audience="hardware"> (<varname conref="_shared-varname-r.dita#reference_varnames/var_cvm_ip_addr"/>
+                        from the worksheet)</ph> with SSH.</cmd>
+			</step>
+			<step id="step_ssh_any_cvm">
+				<cmd id="cmd_ssh_any_cvm">Log on to any Controller VM<ph audience="hardware"> (<varname conref="_shared-varname-r.dita#reference_varnames/var_cvm_ip_addr"/> from the worksheet)</ph> in the cluster with
+                    SSH.</cmd>
+			</step>
+			<step id="step_host_logon_general">
+				<cmd id="cmd_host_logon_general">Log on to the hypervisor host <ph audience="hardware">
+							(<varname conref="../required-files/../required-files/_shared-varname-r.dita#reference_varnames/var_esx_ip_addr"/> from the worksheet)</ph> with SSH or the IPMI remote console (vSphere or AHV) or
+					remote desktop connection (Hyper-V).</cmd>
+			</step>
+			<step id="step_host_logon_hyperv">
+				<cmd>Log on to the hypervisor host <ph audience="hardware"> (<varname
+							conref="../required-files/../required-files/_shared-varname-r.dita#reference_varnames/var_esx_ip_addr"
+						 /> from the worksheet)</ph> with a remote desktop connection.</cmd>
+			</step>
+			<step id="step_cvm_logon_auth">
+				<cmd conref="#task_cvm_shared/cmd_cmd_logon_host" />
+				<info conref="#task_cvm_shared/info_cvm_logon_host" />
+			</step>
+			<step id="step_cvm_logon_host">
+				<cmd id="cmd_cmd_logon_host">Log on to the Controller VM.</cmd>
+				<choices>
+					<choice>vSphere or AHV <codeph>root@host# ssh CompanyX@192.168.5.254</codeph></choice>
+					<choice>Hyper-V <codeph>&gt; ssh CompanyX@192.168.5.254</codeph></choice>
+				</choices>
+				<info id="info_cvm_logon_host">
+					<p>Accept the host authenticity warning if prompted, and enter the Controller VM CompanyX
+						password.</p>
+				</info>
+			</step>
+			<step id="step_cvm_logon_esxi">
+				<cmd id="cmd_cvm_logon">Log on to the Controller VM.</cmd>
+				<info id="info_cvm_logon">
+					<codeblock xml:space="preserve">root@host# ssh CompanyX@192.168.5.254</codeblock>
+					<p>Accept the host authenticity warning if prompted, and enter the
+						Controller VM CompanyX password.</p>
+				</info>
+			</step>
+			<step id="step_cvm_logon_hyperv">
+				<cmd>(Hyper-V) Log on to the Controller VM.</cmd>
+				<info>
+					<codeblock xml:space="preserve">C:\Users\Administrator&gt; powershell
+PS C:\Users\Administrator&gt; ssh CompanyX@192.168.5.254</codeblock>
+					<p>Accept the host authenticity warning if prompted, and enter the Controller VM
+						CompanyX password.</p>
+				</info>
+			</step>
+			<step id="step_genesis_restart">
+				<cmd id="cmd_genesis_restart">Restart genesis.</cmd>
+				<info id="info_genesis_restart">
+					<codeblock xml:space="preserve">CompanyX@cvm$ genesis restart</codeblock>
+				</info>
+				<stepresult id="stepresult_genesis_restart">
+					<p>If the restart is successful, output similar to the following is
+                        displayed:</p>
+					<msgblock xml:space="preserve">Stopping Genesis pids [1933, 30217, 30218, 30219, 30241]
+Genesis started on pids [30378, 30379, 30380, 30381, 30403]</msgblock>
+				</stepresult>
+			</step>
+			<step id="step_ssh_another_cvm">
+				<cmd id="cmd_ssh_another_cvm">Log on to another Controller VM in the cluster with
+                        SSH<ph audience="hardware"> (<varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_cvm_ip_addr2"/> from the worksheet)</ph>.</cmd>
+			</step>
+			<step id="step_shutdown_svm">
+				<note conref="_shared-cluster-t.dita#task_cluster_shared/note_downtime_warning" audience="hardware"/>
+				<cmd id="cmd_shutdown_cvm_vsphere">Log on to the Controller VM with SSH and shut down the
+					Controller VM.</cmd>
+				<info>
+					<codeblock>CompanyX@cvm$ cvm_shutdown -P now</codeblock>
+				</info>
+				<info>
+					<note conref="#task_cvm_shared/note_cvm_warning"/>
+				</info>
+			</step>
+			<step id="step_restart_svm">
+				<cmd id="cmd_restart_cvm_vsphere">Right-click the Controller VM
+                    and select <menucascade>
+						<uicontrol>Power</uicontrol>
+						<uicontrol>Restart Guest</uicontrol>
+					</menucascade>.</cmd>
+				<info>
+					<note conref="#task_cvm_shared/note_cvm_warning"/>
+				</info>
+			</step>
+			<step id="step_sh_restart_cvm">
+				<cmd id="cmd_sh_restart_cvm">Restart the Controller VM. </cmd>
+				<info id="info_sh_restart_cvm">
+					<codeblock xml:space="preserve">CompanyX@cvm$ sudo reboot</codeblock>
+					<p>Enter the CompanyX password if prompted. Wait to proceed until the Controller VM has finished
+						starting, which takes approximately 5 minutes.</p>
+				</info>
+			</step>
+			<step id="step_start_cvm">
+				<cmd id="cmd_start_cvm">Right-click the Controller VM and select <menucascade>
+						<uicontrol>Power</uicontrol>
+						<uicontrol>Power on</uicontrol>
+					</menucascade>.</cmd>
+				<info>Wait approximately 5 minutes for all services to start on the Controller VM.<p
+						conref="_shared-node-t.dita#task_node/p_node_start_led_behavior"
+						audience="hardware" /></info>
+			</step>
+			<step id="step_cvm_shutdown_condition">
+				<note
+					conref="../required-files/_shared-cluster-t.dita#task_cluster_shared/note_downtime_warning"
+					audience="hardware" />
+				<cmd>Log on to the Controller VM with SSH and shut down the Controller VM.</cmd>
+				<info>
+					<codeblock xml:space="preserve">CompanyX@cvm$ cvm_shutdown -P now</codeblock>
+				</info>
+				<info>
+					<note>
+						<p>Always use the <cmdname>cvm_shutdown</cmdname> command to reset, or shutdown the Controller
+							VM. The <cmdname>cvm_shutdown</cmdname> command notifies the cluster
+							that the Controller VM is unavailable.</p>
+					</note>
+				</info>
+			</step>
+			<step id="step_cvm_shutdown_agnostic_hypervisor">
+				<note
+					conref="../required-files/_shared-cluster-t.dita#task_cluster_shared/note_downtime_warning"
+					audience="hardware" />
+				<cmd>Log on to the Controller VM with SSH and shut down the Controller VM.</cmd>
+				<info>
+					<codeblock xml:space="preserve">CompanyX@cvm$ cvm_shutdown -P now</codeblock>
+				</info>
+				<info>
+					<p>If you cannot access the console, you can use SSH to log on to the hypervisor
+						host (<varname>hypervisor_ip_addr</varname> from the worksheet). You can
+						also use the IPMI remote console (vSphere or AHV) or a remote desktop
+						connection (Hyper-V). </p>
+					<note>Always use the <cmdname>cvm_shutdown</cmdname> command to power off, reset, or shutdown
+						the Controller VM. The <cmdname>cvm_shutdown</cmdname> command notifies the
+						cluster that the Controller VM is unavailable.</note>
+				</info>
+			</step>
+			<step id="step_shutdown_cvm">
+				<cmd id="cmd_shutdown_cvm">Right-click the Controller VM and select <menucascade>
+						<uicontrol>Power</uicontrol>
+						<uicontrol>Shut Down Guest OS</uicontrol>
+					</menucascade>.</cmd>
+			</step>
+			<step id="step_sh_shutdown_cvm">
+				<note conref="_shared-cluster-t.dita#task_cluster_shared/note_downtime_warning" audience="hardware"/>
+				<cmd id="cmd_sh_cvm_shutdown">Shut down the Controller VM.</cmd>
+				<info id="info_sh_cvm_shutdown">
+					<codeblock xml:space="preserve">CompanyX@cvm$ sudo shutdown -h now</codeblock>
+				</info>
+			</step>
+			<step id="step_cvm_cluster_status">
+				<cmd id="cmd_cvm_cluster_services">Confirm that cluster services
+                    are running on the Controller VM.</cmd>
+				<info id="info_cvm_cluster_services">
+					<codeblock xml:space="preserve">CompanyX@cvm$ ncli cluster status | grep -A 15 <varname conref="_shared-varname-r.dita#reference_varnames/var_cvm_ip_addr"/></codeblock>
+				</info>
+				<stepresult id="stepresult_cvm_cluster_services">Output similar to the following is
+						displayed.<msgblock xml:space="preserve">    Name                      : 10.1.56.197
+    Status                    : Up
+    ... ... 
+    StatsAggregator           : up
+    SysStatCollector          : up</msgblock><p>Every
+						service listed should be <msgph>up</msgph>.</p></stepresult>
+			</step>
+			<step id="step_ipv6_address">
+				<cmd>Determine the IPv6 address of the Controller VM.</cmd>
+				<info>
+					<codeblock xml:space="preserve">CompanyX@cvm$ ifconfig eth0 | grep "inet6 addr"</codeblock>
+					<p>A line similar to the following should be displayed.</p>
+					<msgblock xml:space="preserve">inet6 addr: <parmname>fe80::20c:29ff:fe45:cf46</parmname>/64 Scope:Link</msgblock>
+					<p>Note the address, which begins with
+                            <parmname>fe80</parmname>. Ignore any characters
+                        that follow the slash.</p>
+				</info>
+			</step>
+			<step>
+				<cmd>Container for substeps.</cmd>
+				<substeps id="substeps_i5f_qqk_l3">
+					<substep id="substep_cvm_logon">
+						<cmd conref="#task_cvm_shared/cmd_cmd_logon_host" />
+						<info conref="#task_cvm_shared/info_cvm_logon" />
+					</substep>
+					<substep id="substep_cvm_shutdown_vsphere">
+						<note conref="_shared-cluster-t.dita#task_cluster_shared/note_downtime_warning" audience="hardware"/>
+						<cmd conref="#task_cvm_shared/cmd_shutdown_cvm_vsphere"/>
+						<info>
+							<note conref="#task_cvm_shared/note_cvm_warning"/>
+						</info>
+					</substep>
+					<substep id="substep_cvm_logon_host">
+						<cmd conref="#task_cvm_shared/cmd_cmd_logon_host"/>
+						<info conref="#task_cvm_shared/info_cvm_logon_host"/>
+					</substep>
+					<substep id="sub_sh_cvm_shutdown">
+						<cmd conref="#task_cvm_shared/cmd_sh_cvm_shutdown"/>
+						<info conref="#task_cvm_shared/info_sh_cvm_shutdown"/>
+					</substep>
+					<substep id="substep_cvm_cluster_services">
+						<cmd conref="#task_cvm_shared/cmd_cvm_cluster_services"/>
+						<info conref="#task_cvm_shared/info_cvm_cluster_services"/>
+						<stepresult conref="#task_cvm_shared/stepresult_cvm_cluster_services"/>
+					</substep>
+					<substep id="substep_genesis_restart">
+						<cmd conref="#task_cvm_shared/cmd_genesis_restart"/>
+						<info conref="#task_cvm_shared/info_genesis_restart"/>
+						<stepresult conref="#task_cvm_shared/stepresult_genesis_restart"/>
+					</substep>
+				</substeps>
+			</step>
+			<step id="step_cvm_logon_running">
+				<cmd>Log on to a running Controller VM in the cluster with
+                        SSH<ph audience="hardware"> (<varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_cvm_ip_addr2"/> from the worksheet)</ph>.</cmd>
+			</step>
+			<step id="step_cvm_ip_config">
+				<cmd>Change the network interface configuration. </cmd>
+				<info>
+					<note type="caution">Do not place a backup copy of the
+							<filepath>ifconfig-ethX</filepath> script files in the
+							<filepath>/etc/sysconfig/network-scripts/</filepath> directory. Ensure
+						that there are no backup files (.bkp or similar file extension) in this
+						location.</note>
+				</info>
+				<substeps id="substeps_sk5_f4x_sf">
+					<substep>
+						<cmd>Open the network interface configuration
+                            file.</cmd>
+						<info>
+							<codeblock xml:space="preserve">CompanyX@cvm$ sudo vi /etc/sysconfig/network-scripts/ifcfg-eth0</codeblock>
+							<p>Enter the CompanyX password.</p>
+						</info>
+					</substep>
+					<substep>
+						<cmd>Press <uicontrol>A</uicontrol> to edit values in
+                            the file. </cmd>
+					</substep>
+					<substep>
+						<cmd>Update entries for <parmname>netmask</parmname>,
+                                <parmname>gateway</parmname>, and
+                                <parmname>address</parmname>.</cmd>
+						<info>
+							<p>The block should look like this:</p>
+							<codeblock xml:space="preserve">ONBOOT="yes" 
+NM_CONTROLLED="no" 
+<parmname>NETMASK</parmname>="<varname>subnet_mask</varname>" 
+<parmname>IPADDR</parmname>="<varname>cvm_ip_addr</varname>" 
+DEVICE="eth0" 
+TYPE="ethernet" 
+<parmname>GATEWAY</parmname>="<varname>gateway_ip_addr</varname>" 
+BOOTPROTO="none" </codeblock>
+							<ul id="ul_vqh_rn2_1h">
+								<li>Replace <varname>cvm_ip_addr</varname> with
+                                    the IP address for the Controller VM.</li>
+								<li>Replace <varname>subnet_mask</varname> with
+                                    the subnet mask for
+                                        <varname>cvm_ip_addr</varname>.</li>
+								<li>Replace <varname>gateway_ip_addr</varname>
+                                    with the gateway address for
+                                        <varname>cvm_ip_addr</varname>.</li>
+							</ul>
+							<note type="warning" id="note_ifcfg_care">Carefully check the file
+								to ensure there are no syntax errors, whitespace at the end of
+								lines, or blank lines in the file.</note>
+						</info>
+					</substep>
+					<substep>
+						<cmd>Press <uicontrol>Esc</uicontrol>. </cmd>
+					</substep>
+					<substep>
+						<cmd>Type <userinput>:wq</userinput> and press
+                                <uicontrol>Enter</uicontrol> to save your
+                            changes. </cmd>
+					</substep>
+				</substeps>
+			</step>
+			<step id="step_cvm_name_change">
+				<cmd>Ensure that the new Controller VM name matches the original Controller VM name
+					and change it if necessary. </cmd>
+				<substeps>
+					<substep>
+						<cmd>Check the <filepath>/etc/hosts</filepath> file for the original Controller VM name.</cmd>
+						<info>
+							<codeblock xml:space="preserve">CompanyX@cvm$ cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+127.0.1.1   CompanyX-Controller-VM
+127.0.0.1 <b>NTNX-14SM89990139-A-CVM</b>
+...</codeblock>
+						</info>
+					</substep>
+					<substep>
+						<cmd>Check the <filepath>/etc/sysconfig/network</filepath> file for the new Controller VM
+							name.</cmd>
+						<info>
+							<codeblock xml:space="preserve">CompanyX@cvm$ cat /etc/sysconfig/network
+NETWORKING=yes
+HOSTNAME=<b>NTNX-15SM95444444-B-CVM
+</b></codeblock>
+						</info>
+					</substep>
+					<substep>
+						<cmd>If necessary, change the Controller VM name in the
+								<filepath>/etc/sysconfig/network</filepath> file to match the old
+							name in the <filepath>/etc/hosts</filepath> file.</cmd>
+						<info>
+							<codeblock xml:space="preserve">CompanyX@cvm$ sudo vi /etc/sysconfig/network</codeblock>
+							<p>Enter the CompanyX password.</p>
+						</info>
+					</substep>
+					<substep>
+						<cmd>Press <uicontrol>A</uicontrol> to edit values in the file. </cmd>
+					</substep>
+					<substep>
+						<cmd>Update the Controller VM name so that it matches the original
+							Controller VM name.</cmd>
+						<info>
+							<codeblock xml:space="preserve">NETWORKING=yes
+HOSTNAME=<b>NTNX-14SM89990139-A-CVM</b></codeblock>
+							<note type="warning">Carefully check the file to ensure there are no
+								syntax errors, whitespace at the end of lines, or blank lines in the
+								file.</note>
+						</info>
+					</substep>
+					<substep>
+						<cmd>Press <uicontrol>Esc</uicontrol>. </cmd>
+					</substep>
+					<substep>
+						<cmd>Type <userinput>:wq</userinput> and press <uicontrol>Enter</uicontrol>
+							to save your changes. </cmd>
+					</substep>
+				</substeps>
+			</step>
+			<step>
+				<cmd>ipmitool usage: do not conref the step </cmd>
+				<info>
+					<codeblock xml:space="preserve">CompanyX@cvm$ <ph id="ph_ipmitool_usage">ipmitool -I lanplus -H <varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_ip_addr" /> -U <varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_user" /> -P <varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_password" /></ph></codeblock>
+					<ul id="ul_ipmitool_usage">
+						<li>Replace <varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_user"/> and <varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_password"/> with the logon credentials for the IPMI
+                                interface<ph audience="hardware"> (<varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_user"/> and <varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_password"/> from the worksheet)</ph>.</li>
+						<li>Replace <varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_ip_addr"/> with the IP address of the IPMI interface on the
+                                node<ph audience="hardware"> (<varname conref="../required-files/_shared-varname-r.dita#reference_varnames/var_mgmt_interface_ip_addr"/> from the worksheet)</ph>. </li>
+					</ul>
+				</info>
+			</step>
+			<step id="step_cvm_increase_memory">
+				<cmd>In vCenter, configure the resources on each Controller
+                    VM.</cmd>
+				<info>The Controller VM must be shut down to change the
+                    settings.</info>
+				<substeps id="substeps_cvm_increase_memory">
+					<substep id="substep_cvm_upgrade_virtual_hardware">
+						<cmd>Right-click the Controller VM. If the option
+                                <uicontrol>Upgrade Virtual Hardware</uicontrol>
+                            is displayed, select it. Click
+                                <uicontrol>Yes</uicontrol> in the confirmation
+                            dialog box and wait until the vSphere client reports
+                            that the upgrade is complete.</cmd>
+						<info>If this option is not shown, you do not need to
+                            upgrade the virtual hardware.</info>
+					</substep>
+					<substep id="substep_cvm_increase_memory_start">
+						<cmd>Right-click the Controller VM and select
+                                <uicontrol>Edit Settings</uicontrol>.</cmd>
+					</substep>
+					<substep>
+						<cmd>Select <menucascade>
+								<uicontrol>Hardware</uicontrol>
+								<uicontrol>Memory</uicontrol>
+							</menucascade> and increase the memory configuration
+                            to 10 GB or 12 GB.</cmd>
+						<info>
+							<image scale="77" placement="break" href="../appliance/images/cvm-ram-12gb.png"
+								id="image_gfg_q3q_n3" />
+						</info>
+					</substep>
+					<substep>
+						<cmd>Click <menucascade>
+								<uicontrol>Resources</uicontrol>
+								<uicontrol>CPU</uicontrol>
+							</menucascade> and select the
+                                <uicontrol>Unlimited</uicontrol> check box if
+                            the box is not already checked.</cmd>
+						<info>
+							<image scale="77" href="../appliance/images/cvm-unlimited-resource.png" placement="break"
+								id="image_bgt_qvv_ph" />
+						</info>
+					</substep>
+					<substep>
+						<cmd>Click <uicontrol>Memory</uicontrol> and select the
+                                <uicontrol>Reserve all guest memory</uicontrol>
+                            check box.</cmd>
+						<info>
+							<image scale="77" placement="break" href="../appliance/images/cvm-ram-reserve.png"
+								id="image_krp_s3q_n3" />
+						</info>
+					</substep>
+					<substep>
+						<cmd>Click <uicontrol>OK</uicontrol>.</cmd>
+					</substep>
+					<substep id="substep_power_on">
+						<cmd>Right-click the Controller VM and select <menucascade>
+								<uicontrol>Power</uicontrol>
+								<uicontrol>Power On</uicontrol>
+							</menucascade>.</cmd>
+					</substep>
+					<substep id="substep_cvm_upgrade_vmw_tools">
+						<cmd>Right-click the CVM. If the option <menucascade>
+								<uicontrol>Guest</uicontrol>
+								<uicontrol>Install/Upgrade VMware
+                                    Tools</uicontrol>
+							</menucascade> is available, select it.</cmd>
+						<info>Choose <uicontrol>Automatic Tools
+                                Upgrade</uicontrol>, type
+                                <userinput>--default</userinput> in the
+                                <uicontrol>Advanced Options</uicontrol> field,
+                            and click <uicontrol>OK</uicontrol>. If the
+                                <uicontrol>Automatic Tools Upgrade</uicontrol>
+                            option is unavailable, wait one minute and try
+                            again.</info>
+					</substep>
+				</substeps>
+				<info>Perform these steps once for each Controller VM in the
+                    cluster.</info>
+			</step>
+			<step>
+				<cmd>Conref targets as substeps.</cmd>
+				<substeps>
+					<substep id="substep_sh_restart_cvm">
+						<cmd conref="#task_cvm_shared/cmd_sh_restart_cvm"/>
+						<info conref="#task_cvm_shared/info_sh_restart_cvm"/>
+					</substep>
+					<substep id="substep_cvm_restart">
+						<cmd conref="#task_cvm_shared/cmd_sh_restart_cvm"/>
+						<info conref="#task_cvm_shared/info_sh_restart_cvm"/>
+					</substep>
+				</substeps>
+			</step>
+			<step id="step_ncc_run">
+				<cmd>Run the CompanyX Cluster Checks (NCC).</cmd>
+				<choices>
+					<choice>From the Prism web console Health page, select <menucascade>
+						<uicontrol>Actions</uicontrol>
+						<uicontrol>Run Checks</uicontrol>
+						</menucascade>. Select <uicontrol>All checks</uicontrol> and click
+						<uicontrol>Run</uicontrol>.</choice>
+					<choice>Log in to a Controller VM and use the ncc
+						CLI.<codeblock>CompanyX@cvm$ ncc health_checks run_all</codeblock></choice>
+				</choices>
+				<info>If the check reports a status other than <msgph>PASS</msgph>, resolve the reported issues
+					before proceeding. If you are unable to resolve the issues, contact CompanyX
+					support for assistance.</info>
+			</step>
+		</steps-unordered>
+	</taskbody>
+</task>
